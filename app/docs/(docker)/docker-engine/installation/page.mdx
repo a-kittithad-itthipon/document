@@ -1,0 +1,25 @@
+# Installation
+
+เอกสารนี้อธิบายขั้นตอนการติดตั้ง **Docker Engine** บนระบบปฏิบัติการ  **Ubuntu 22.04 LTS** 
+โดยใช้ Repository อย่างเป็นทางการของ Docker เพื่อให้ได้ Docker เวอร์ชันล่าสุด และพร้อมสำหรับการใช้งานจริงบนเซิร์ฟเวอร์
+
+---
+
+แพ็กเกจ Docker ที่มีอยู่ใน Ubuntu Repository อาจไม่ใช่เวอร์ชันล่าสุด  
+เพื่อให้ได้ Docker เวอร์ชันใหม่และเสถียรที่สุด  
+เราจะติดตั้ง Docker จาก **Docker Official Repository**
+
+### อัปเดตรายการแพ็กเกจของระบบ
+
+```bash
+sudo apt update
+```
+
+Docker ใช้ Repository ที่เข้าถึงผ่าน HTTPS จึงจำเป็นต้องติดตั้งแพ็กเกจพื้นฐานที่ช่วยให้ระบบสามารถดาวน์โหลดและตรวจสอบความปลอดภัยของแพ็กเกจได้
+
+```bash
+sudo apt install -y \
+  ca-certificates \
+  curl \
+  gnupg \
+  lsb-release

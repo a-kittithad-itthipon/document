@@ -1,0 +1,95 @@
+import Zoom from "react-medium-image-zoom";
+import "react-medium-image-zoom/dist/styles.css";
+
+# Introduction
+
+<div className="mt-7">
+  <Zoom>
+    <img
+      src="/img/docker-home.png"
+      alt="Docker"
+      style={{ width: "100%", height: "auto", borderRadius: "15px" }}
+    />
+  </Zoom>
+</div>
+
+## Docker คืออะไร
+
+Docker คือแพลตฟอร์มสำหรับการพัฒนา ทดสอบ และปรับใช้แอปพลิเคชัน โดยใช้แนวคิดของ **Container** ซึ่งเป็นสภาพแวดล้อมที่ถูกแยกออกจากระบบปฏิบัติการหลัก (Isolated Environment)
+
+Container จะบรรจุทุกองค์ประกอบที่แอปพลิเคชันต้องใช้เอาไว้ภายใน
+ทำให้แอปพลิเคชันสามารถทำงานได้อย่าง  
+**สม่ำเสมอและเสถียร** ไม่ว่าจะรันบนเครื่องนักพัฒนา เซิร์ฟเวอร์ หรือระบบคลาวด์
+
+---
+
+## ปัญหาที่ Docker เข้ามาแก้ไข
+
+นักพัฒนามักพบปัญหาคลาสสิก เช่น
+
+> **“It works on my machine”**  
+> แอปพลิเคชันทำงานได้บนเครื่องผู้พัฒนา  
+> แต่ไม่สามารถทำงานได้บนเครื่องอื่นหรือ Production Server
+
+Docker ถูกออกแบบมาเพื่อแก้ปัญหานี้โดยตรง
+
+---
+
+## Docker ทำงานอย่างไร
+
+Docker ใช้แนวคิดของ Container ในการรวมทุกสิ่งที่แอปพลิเคชันต้องใช้ เช่น
+
+- Runtime Environment
+- Libraries
+- Dependencies
+- Configuration
+- Source Code
+
+เมื่อรันแอปภายใน Container สภาพแวดล้อมจะถูกควบคุมให้เหมือนกันทุกครั้งไม่ว่าจะรันบนระบบใดก็ตาม
+
+---
+
+## Docker Engine คืออะไร
+
+Docker Engine คือหัวใจหลักของ Docker ทำหน้าที่จัดการ Container และ Image ทั้งหมด
+
+หน้าที่หลัก ได้แก่
+
+- Build Docker Image
+- Run / Stop Container
+- จัดการ Container และ Image
+- ติดต่อผ่าน Docker CLI และ API
+
+---
+
+## เครื่องมือหลักใน Docker Platform
+
+#### 1. Docker Engine
+
+ใช้งานผ่าน Command Line เหมาะสำหรับ Server และ Production
+
+#### 2. Docker Desktop
+
+มี GUI ใช้งานง่าย เหมาะสำหรับผู้เริ่มต้นรองรับ Windows และ macOS
+
+#### 3. Docker Hub
+
+ศูนย์รวม Docker Image มี Image สำเร็จรูป เช่น `nginx`, `mysql`, `node`
+
+---
+
+## Container vs Virtual Machine
+
+| Container              | Virtual Machine     |
+| ---------------------- | ------------------- |
+| ใช้ทรัพยากรน้อย        | ใช้ทรัพยากรมาก      |
+| เริ่มทำงานรวดเร็ว      | เริ่มทำงานช้า       |
+| แชร์ Kernel ของ Host   | มี OS แยกต่างหาก    |
+| เหมาะกับ Microservices | เหมาะกับระบบ Legacy |
+
+---
+
+## สรุป
+
+Docker ช่วยลดปัญหาด้าน Environment เพิ่มความเสถียรและความรวดเร็วในการ Deploy จึงเหมาะสำหรับระบบ Server, Cloud
+รวมถึงระบบ Deploy ภายในองค์กรและสถานศึกษา
