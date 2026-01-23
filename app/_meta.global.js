@@ -1,4 +1,5 @@
 const system_deployment = {
+  "start": "",
   "platform": {
     items: {
       "active-site": "",

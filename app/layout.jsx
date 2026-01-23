@@ -1,7 +1,7 @@
 import { Footer, Layout, Navbar } from "nextra-theme-docs";
 import { Head } from "nextra/components";
 import { getPageMap } from "nextra/page-map";
-import { Prompt } from "next/font/google";
+import { Prompt, Kanit } from "next/font/google";
 import "./globals.css";
 
 export const metadata = {
@@ -24,6 +24,11 @@ const promptSans = Prompt({
   weight: ["200","300","400","500","600","700","800","900"],
 });
 
+const kanit = Kanit({
+  variable: "--font-sans",
+  subsets: ["latin", "thai"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+});
 
 const footer = <Footer>MIT {new Date().getFullYear()} © Nextra.</Footer>;
 
@@ -31,12 +36,12 @@ export default async function RootLayout({ children }) {
   return (
     <html
       // Not required, but good for SEO
-      lang="en"
+      lang="th"
       // Required to be set
       dir="ltr"
       // Suggested by `next-themes` package https://github.com/pacocoursey/next-themes#with-app
       suppressHydrationWarning
-      className={promptSans.variable}
+      className={kanit.variable}
     >
       <Head
       // ... Your additional head options

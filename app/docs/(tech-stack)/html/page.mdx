@@ -1,1 +1,57 @@
+import { FileTree } from 'nextra/components'
+import { Callout, Steps, Tabs } from 'nextra/components'
+
 # HTML
+
+เอกสารนี้อธิบายขั้นตอนการ Deploy เว็บไซต์ **HTML แบบ Static** โดยใช้ **Docker Compose**  
+เหมาะสำหรับการใช้งานภายในเครือข่าย **LAN** การ Deploy HTML ด้วย Docker จะใช้ **Web Server**  
+เช่น **Nginx** เพื่อให้บริการไฟล์ HTML ผ่านโปรโตคอล HTTP
+
+---
+
+## File Structure
+
+โครงสร้างไฟล์ของโปรเจกต์ HTML ที่ใช้ร่วมกับ Docker Compose ควรแยกไฟล์เว็บไซต์ออกจากไฟล์กำหนดค่าของ Docker อย่างชัดเจน เพื่อให้ง่ายต่อการดูแลและแก้ไขในอนาคต
+
+<FileTree>
+  <FileTree.Folder name="project" defaultOpen>
+    <FileTree.File name="docker-compose.yml" />
+    <FileTree.Folder name="html" defaultOpen>
+      <FileTree.File name="index.html" />
+      <FileTree.File name="style.css" />
+      <FileTree.File name="script.js" />
+    </FileTree.Folder>
+  </FileTree.Folder>
+</FileTree>
+
+โครงสร้างดังกล่าวแยกหน้าที่ของไฟล์อย่างชัดเจน ไฟล์ `docker-compose.yml`  
+ใช้สำหรับกำหนดการทำงานของ Container โฟลเดอร์ `html` ใช้เก็บไฟล์เว็บไซต์ทั้งหมดที่ Nginx จะนำไปให้บริการผ่านเครือข่าย
+
+
+## Docker Compose
+
+<Callout type="info">
+  **หมายเหตุการระบุพอร์ต** เนื่องจากระบบใช้การระบุตัวตนผ่าน **Local DNS** ของแพลตฟอร์ม บริการ Nginx รันบน Port 80 ภายในเครือข่ายโดยตรง โดยไม่ต้องทำการ Map Port (Port Forwarding) ออกมายังภายนอก
+</Callout>
+
+```yaml filename="docker-compose.yml (Deploy on Adocs Platform)"
+version: '3.8'
+
+services:
+  web:
+    image: nginx:alpine
+#   port: "8080:80"    
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+    restart: unless-stopped
+    networks:
+      - lan-net
+
+networks:
+  lan-net:
+    external: true
+```
+
+<Callout type="warning">
+    external: true คือการเข้าร่วม Network ชื่อ lan-net ที่ถูกสร้างไว้เเล้ว
+</Callout>
