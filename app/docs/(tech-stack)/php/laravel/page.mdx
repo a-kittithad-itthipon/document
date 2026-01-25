@@ -1,1 +1,230 @@
+import { FileTree } from "nextra/components";
+import { Callout, Steps } from "nextra/components";
+
 # Laravel
+
+เอกสารนี้อธิบายขั้นตอนการ Deploy เว็บแอปพลิเคชัน **Laravel** โดยใช้ **Docker Compose** เพียงไฟล์เดียว (Inline Build Strategy) ร่วมกับ **FrankenPHP** ซึ่งเป็น Server ประสิทธิภาพสูงที่รวม PHP Runtime และ Caddy Web Server ไว้ด้วยกัน
+
+วิธีนี้เหมาะสำหรับการใช้งานที่ต้องการความรวดเร็ว ลดความซับซ้อนในการจัดการ `Dockerfile` แยก และการใช้งานภายในเครือข่าย **LAN** หรือ Platform ที่รองรับ Docker Compose Build
+
+---
+
+## Project Structure
+
+โครงสร้างดังกล่าวแยกหน้าที่ของไฟล์อย่างชัดเจน ไฟล์ `docker-compose.yml` ใช้สำหรับกำหนดการ Build Image, ติดตั้ง Extension และการรัน Server ส่วนโฟลเดอร์ `app` ใช้เก็บ Source Code Laravel ทั้งหมด
+
+
+<FileTree>
+  <FileTree.Folder name="project" defaultOpen>
+    <FileTree.File name="docker-compose.yml" />
+    <FileTree.Folder name="app" defaultOpen>
+      <FileTree.File name=".env" />
+    </FileTree.Folder>
+  </FileTree.Folder>
+</FileTree>
+
+
+## Application Components
+
+### Environment Variables (.env)
+แก้ไขไฟล์ `.env` ในโฟลเดอร์ `app` เพื่อกำหนดค่าเชื่อมต่อฐานข้อมูลและตั้งค่าพื้นฐานของ Laravel
+
+```bash filename="app/.env"
+APP_NAME=Laravel
+APP_ENV=production
+APP_KEY=base64:your_generated_key_here
+APP_DEBUG=false
+APP_URL=http://localhost
+
+DB_CONNECTION=mysql
+DB_HOST=database
+DB_PORT=3306
+DB_DATABASE=your_db_name
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
+```
+
+<Callout type="warning"> ห้ามเปิด APP_DEBUG=true บน Production เพราะอาจทำให้ข้อมูล Environment เผยแพร่สู่สาธารณะได้ </Callout>
+
+<Callout type="info"> DB_HOST คือชื่อ Service หรือ Container Name ของฐานข้อมูลที่อยู่ในเครือข่ายเดียวกัน (lan-net) </Callout>
+
+## Docker Compose
+
+<Callout type="info"> 
+หมายเหตุการระบุพอร์ต เนื่องจากระบบใช้การระบุตัวตนผ่าน Local DNS ของแพลตฟอร์ม บริการ Laravel จะรันบน Port 80 ภายในเครือข่ายโดยตรง โดยใช้ Caddy Server ที่ฝังมากับ FrankenPHP 
+</Callout>
+
+### Upload On Platform
+
+```yaml filename="docker-compose.yml"
+version: "3.8"
+services:
+  laravel:
+    build:
+      context: .
+      dockerfile_inline: |
+        FROM dunglas/frankenphp:php8.3
+        RUN install-php-extensions pdo_mysql gd intl zip bcmath pcntl mbstring
+        COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+        WORKDIR /app
+        COPY ./app .
+        RUN composer install --no-dev --optimize-autoloader
+        RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache
+
+    environment:
+      - SERVER_NAME=:80
+      - WEB_DOCUMENT_ROOT=/app/public
+    
+    env_file:
+      - ./app/.env
+
+    command: >
+      sh -c "
+      php artisan migrate --force &&
+      php artisan optimize:clear &&
+      frankenphp run --config /etc/caddy/Caddyfile
+      "
+      
+    restart: unless-stopped
+    networks:
+      - lan-net
+
+networks:
+  lan-net:
+    external: true
+```
+
+<Callout type="warning"> composer install ถูกใส่ไว้ในขั้นตอน Build เพื่อป้องกันปัญหา Error 500 จากการขาดไฟล์ vendor เมื่อนำขึ้น Platform </Callout>
+
+### Laravel With Database
+กรณีต้องการสร้าง Database พร้อมกับ Laravel ในชุดเดียวกัน
+
+```yaml filename="docker-compose.yml"
+version: "3.8"
+
+services:
+  laravel:
+    build:
+      context: .
+      dockerfile_inline: |
+        FROM dunglas/frankenphp:php8.3
+        RUN install-php-extensions pdo_mysql gd intl zip bcmath pcntl mbstring
+        COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+        WORKDIR /app
+        COPY ./app .
+        RUN composer install --no-dev --optimize-autoloader
+        RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache
+
+    environment:
+      - SERVER_NAME=:80
+      - WEB_DOCUMENT_ROOT=/app/public
+
+    env_file:
+      - ./app/.env
+
+    command: >
+      sh -c "
+      php artisan migrate --force &&
+      php artisan optimize:clear &&
+      frankenphp run --config /etc/caddy/Caddyfile
+      "
+
+    depends_on:
+      - database
+    restart: unless-stopped
+
+    networks:
+      - lan-net
+
+  database:
+    image: mariadb:10.6
+    environment:
+      - MYSQL_ROOT_PASSWORD=your_root_password
+      - MYSQL_DATABASE=your_db_name
+      - MYSQL_USER=your_username
+      - MYSQL_PASSWORD=your_password
+
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: unless-stopped
+    networks:
+      - lan-net
+
+volumes:
+  db_data:
+
+networks:
+  lan-net:
+    external: true
+```
+
+### Full Docker Compose
+
+```yaml filename="docker-compose.yml"
+# ระบุเวอร์ชันของรูปแบบไฟล์ Docker Compose
+version: "3.8"
+
+services:
+  # บริการ Laravel Application
+  laravel:
+    # ส่วนกำหนดการสร้าง Image แบบ Inline (แทน Dockerfile)
+    build:
+      context: .
+      dockerfile_inline: |
+        # ใช้ Image FrankenPHP (PHP 8.3)
+        FROM dunglas/frankenphp:php8.3
+        
+        # ติดตั้ง PHP Extensions ที่ Laravel ต้องการ
+        RUN install-php-extensions pdo_mysql gd intl zip bcmath pcntl mbstring
+        
+        # ติดตั้ง Composer
+        COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+        
+        # กำหนด Working Directory
+        WORKDIR /app
+        
+        # คัดลอก Source Code เข้า Container
+        COPY ./app .
+        
+        # ติดตั้ง Dependencies ของ Laravel (Vendor)
+        RUN composer install --no-dev --optimize-autoloader
+        
+        # กำหนดสิทธิ์การเขียนไฟล์ให้ Storage
+        RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache
+
+    # กำหนดชื่อคอนเทนเนอร์
+    container_name: laravel-app
+
+    # การตั้งค่า Environment สำหรับ FrankenPHP
+    environment:
+      - SERVER_NAME=:80
+      - WEB_DOCUMENT_ROOT=/app/public
+
+    # อ่านค่า Config จากไฟล์ .env
+    env_file:
+      - ./app/.env
+
+    # คำสั่งเริ่มทำงาน รัน Migration , เคลียร์ Cache , รัน Server
+    command: >
+      sh -c "
+      php artisan migrate --force &&
+      php artisan optimize:clear &&
+      frankenphp run --config /etc/caddy/Caddyfile
+      "
+
+    # กำหนดให้คอนเทนเนอร์เริ่มทำงานใหม่อัตโนมัติเมื่อเกิดข้อผิดพลาด
+    restart: unless-stopped
+
+    # เชื่อมต่อคอนเทนเนอร์เข้ากับเครือข่ายที่กำหนด
+    networks:
+      - lan-net
+
+    # เปิดพอร์ตภายในคอนเทนเนอร์
+    expose:
+      - "80"
+
+networks:
+  # กำหนดเครือข่าย Docker ที่สร้างไว้ล่วงหน้า
+  lan-net:
+    external: true
+```
