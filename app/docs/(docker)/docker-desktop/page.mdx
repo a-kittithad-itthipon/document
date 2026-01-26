@@ -119,3 +119,37 @@ import { Callout, Steps, Tabs } from 'nextra/components'
 
 ## Building and Sharing Docker Images
 
+### Build Image Example (HTML and Nginx)
+
+**Docker Image** คือ "แม่แบบ" ที่บรรจุ OS ขนาดเล็ก, โค้ด และไลบรารีที่จำเป็นไว้
+
+สร้าง Image ชื่อ my-web ซึ่งพร้อมที่จะรันเป็น Container
+
+<div className="mt-7">
+  <Zoom>
+    <img
+      src="/img/docker-Desktop8.png"
+      alt="Docker Architecture Overview"
+      style={{ width: "100%", height: "auto", borderRadius: "15px"}}
+    />
+  </Zoom>
+</div> 
+
+### ขั้นตอนการ Build Image
+เมื่อคุณมีไฟล์ `Dockerfile` ในเครื่องแล้ว ให้ใช้คำสั่งผ่าน Terminal หรือ Docker Desktop:
+
+**รูปแบบคำสั่ง:**
+`docker build -t <image-name>:<tag> <path>`
+
+* **ตัวอย่าง:** `docker build -t my-app:v1 .`
+* **คำอธิบาย:** สร้าง Image ชื่อ `my-app` เวอร์ชัน `v1` โดยใช้ไฟล์ Dockerfile ที่อยู่ในโฟลเดอร์ปัจจุบัน (`.`)
+
+### การแบ่งปัน Image (Docker Hub)
+1. **Tag**: ตั้งชื่อให้ตรงกับ Repository บน Cloud
+   `docker tag <image-name> <username>/<repository>:<tag>`
+2. **Push**: อัปโหลดขึ้น Docker Hub
+   `docker push <username>/<repository>:<tag>`
+
+
+
+
