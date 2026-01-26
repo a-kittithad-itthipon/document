@@ -1,1 +1,67 @@
 # Docker Image
+
+Image เปรียบเสมือน "พิมพ์เขียว" หรือไฟล์ต้นฉบับของโปรแกรมที่เราต้องการใช้งาน ก่อนจะสร้าง Container ได้ เราจำเป็นต้องมี Image ก่อนครับ
+
+## Basic Commands      
+
+### Image (Search)
+
+คุณสามารถค้นหารูปภาพที่มีอยู่บน Docker Hub ได้โดยใช้ **docker** คำสั่งพร้อม **search** คำสั่งย่อย 
+
+ตัวอย่าง: หากต้องการค้นหา Ubuntu 
+
+```bash
+docker search ubuntu
+```
+ > *ระบบจะแสดงรายชื่อ Image ที่เกี่ยวข้อง พร้อมรายละเอียด เช่น ความนิยม (Stars) และสถานะ Official*
+
+ผลลัพธ์ที่ได้จะมีลักษณะคล้ายกับตัวอย่างต่อไปนี้:
+```bash
+NAME                             DESCRIPTION                                     STARS     OFFICIAL   AUTOMATED
+ubuntu                           Ubuntu is a Debian-based Linux operating sys…   14048     [OK]
+websphere-liberty                WebSphere Liberty multi-architecture images …   283       [OK]
+neurodebian                      NeuroDebian provides neuroscience research s…   88        [OK]
+open-liberty                     Open Liberty multi-architecture images based…   51        [OK]
+...
+```
+
+### Image (Pull)
+เมื่อเจอ Image ที่ต้องการแล้ว ให้ใช้คำสั่ง pull เพื่อดาวน์โหลดลงมาเก็บไว้ในเครื่อง
+
+ตัวอย่าง: ดาวน์โหลด Ubuntu
+
+```bash
+docker pull ubuntu
+```
+
+จะเห็นผลลัพธ์ดังต่อไปนี้:
+```bash
+Using default tag: latest
+latest: Pulling from library/ubuntu
+e0b25ef51634: Pull complete
+Digest: sha256:9101220a875cee98b016668342c489ff0674f247f6ca20dfc91b91c0f28581ae
+Status: Downloaded newer image for ubuntu:latest
+docker.io/library/ubuntu:latest
+```
+
+### Image (List)
+ตรวจสอบว่าในเครื่องของเรามี Image อะไรถูกดาวน์โหลดเก็บไว้บ้าง
+
+```bash
+docker images
+```
+ > *ระบบจะแสดงตารางข้อมูลประกอบด้วย Repository, Tag, Image ID, วันที่สร้าง และขนาดไฟล์*
+
+ผลลัพธ์ที่ได้จะมีลักษณะคล้ายกับตัวอย่างต่อไปนี้:
+```bash
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+ubuntu              latest              1d622ef86b13        3 weeks ago         73.9MB
+hello-world         latest              bf756fb1ae65        4 months ago        13.3kB
+```
+
+### Image (Remove Image)
+หากต้องการลบ Image เพื่อประหยัดพื้นที่ (ต้องลบ Container ที่ใช้ Image นั้นออกก่อน)
+
+```bash
+docker rmi [Image_ID หรือ ชื่อ Image]
+```

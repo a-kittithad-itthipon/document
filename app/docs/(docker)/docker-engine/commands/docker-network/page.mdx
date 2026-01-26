@@ -1,1 +1,47 @@
 # Docker Network
+
+ตามปกติแล้ว Docker Container จะถูกสร้างขึ้นมาในสภาพแวดล้อมที่ "ปิดกั้น" (Isolated) จากโลกภายนอกและจาก Container ตัวอื่นๆ
+
+**Docker Network** คือเครื่องมือที่ช่วยให้ Container สามารถพูดคุยสื่อสารกันได้ (เช่น Web Server คุยกับ Database) หรือเชื่อมต่อกับโลกภายนอกได้
+
+## Network (Network Drivers)
+
+เมื่อติดตั้ง Docker เราจะได้ Network พื้นฐานมา 3 แบบหลักๆ คือ:
+
+1.  **Bridge (Default):** เป็นค่าเริ่มต้น Container จะได้ IP Address เป็นของตัวเอง และคุยกันผ่าน IP นั้น (เหมือนมี Router ส่วนตัวในเครื่อง)
+2.  **Host:** Container จะใช้ IP และ Port เดียวกับเครื่องคอมพิวเตอร์ของเราเลย (เร็วแต่ Port อาจจะชนกันง่าย)
+3.  **None:** ตัดขาดจากโลกภายนอกโดยสิ้นเชิง ไม่มีเน็ตใช้
+
+---
+
+## Basic Commands
+
+1. ดูรายชื่อ Network ทั้งหมด
+```bash
+docker network ls
+```
+ผลลัพธ์: จะแสดงตารางที่มีช่อง NETWORK ID, NAME, และ DRIVER
+
+2. ดูรายละเอียด Network (Inspect)
+ใช้ดูว่ามี Container ตัวไหนเชื่อมต่ออยู่บ้าง หรือดู IP Address ของ Container ในวงนั้น
+
+```bash
+docker network inspect [Network_Name หรือ ID]
+```
+ > *ตัวอย่าง: docker network inspect bridge*
+
+3. สร้าง Network ใหม่ (Create)
+ทำไมต้องสร้างใหม่? เพราะ Network แบบ Default Bridge จะไม่สามารถใช้ "ชื่อ Container" ในการคุยกันได้ (DNS Resolution) แต่ถ้าเราสร้างเอง เราจะเรียกหากันด้วยชื่อได้เลย
+
+```bash
+docker network create [ชื่อ_network_ที่ต้องการ]
+```
+ > *ตัวอย่าง: docker network create my-net*
+
+4. Network (Remove)
+
+```bash
+docker network rm [ชื่อ_network]
+```
+
+ > *ต้องไม่มี Container ใช้งานอยู่ถึงจะลบได้*

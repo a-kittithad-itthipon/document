@@ -1,1 +1,119 @@
+import Zoom from "react-medium-image-zoom";
+import "react-medium-image-zoom/dist/styles.css";
+import { Callout, Steps, Tabs } from 'nextra/components'
+
 # Docker Desktop
+
+**Docker Desktop** เป็นเครื่องมือที่ช่วยให้ผู้ใช้สามารถสร้างและจัดการ Container ได้ง่ายบน Windows และ macOS    
+
+<div className="mt-7">
+  <Zoom>
+    <img
+      src="/img/docker-Desktop1.png"
+      alt="Docker Architecture Overview"
+      style={{ width: "100%", height: "auto", borderRadius: "15px"}}
+    />
+  </Zoom>
+</div>
+
+## Installing Docker Desktop
+
+1.ดาวน์โหลด: ไปที่ (https://www.docker.com/products/docker-desktop)
+
+2.เลือก "Download Docker Desktop"
+
+3.คลิก "Download for Windows-AMD64"
+
+<div className="mt-7">
+  <Zoom>
+    <img
+      src="/img/docker-Desktop.png"
+      alt="Docker Architecture Overview"
+      style={{ width: "100%", height: "auto", borderRadius: "15px"}}
+    />
+  </Zoom>
+</div>
+
+
+4.เริ่มต้นการใช้งาน Docker Desktop (จำ เป็นต้อง Login เมื่อจะ Push Image ขึ้น Docker Hub)
+
+## Getting Started with Docker
+
+เราจะมาลองสร้าง Web Server ง่ายๆ ด้วย Nginx เพื่อทดสอบว่า Docker ใช้งานได้จริง
+
+### Search Image 
+พิมพ์ `nginx` ในช่องค้นหาด้านบน และกดปุ่ม **Pull** ซึ่งเป็น Image ประเภท Web Server ให้บริการเว็บเพจและตอบสนองคำขอจากผู้ใช้
+
+<div className="mt-7">
+  <Zoom>
+    <img
+      src="/img/docker-Desktop2.png"
+      alt="Docker Architecture Overview"
+      style={{ width: "100%", height: "auto", borderRadius: "15px"}}
+    />
+  </Zoom>
+</div>
+
+### Set up and run
+ไปที่แท็บ **Images** กดปุ่ม Run ที่ nginx และตั้งค่า Port ดังนี้:
+
+<div className="mt-7">
+  <Zoom>
+    <img
+      src="/img/docker-Desktop3.png"
+      alt="Docker Architecture Overview"
+      style={{ width: "100%", height: "auto", borderRadius: "15px"}}
+    />
+  </Zoom>
+</div>
+
+1. กดที่ลูกศรลงตรง **Optional settings** เพื่อขยายเมนู
+2. **Container Name:** ตั้งชื่อเล่นให้จำง่าย เช่น `my-web-server`
+3. **Host Port:** (สำคัญมาก) ให้ใส่เลข `8080`
+   > *อธิบาย: คือการบอกว่า ถ้าเราเข้าเว็บผ่าน Port 8080 ในเครื่องเรา ให้ส่งข้อมูลไปที่ Port 80 ของ Docker*
+
+<div className="mt-7">
+  <Zoom>
+    <img
+      src="/img/docker-Desktop4.png"
+      alt="Docker Architecture Overview"
+      style={{ width: "100%", height: "auto", borderRadius: "15px"}}
+    />
+  </Zoom>
+</div>
+
+### Check status
+เมื่อกดปุ่ม Run สีน้ำเงินแล้ว ระบบจะพาไปที่หน้า **Containers**
+ให้สังเกตสถานะต้องเป็นสีเขียว **Running** และมี Port ระบุเป็น `8080:80`
+
+<div className="mt-7">
+  <Zoom>
+    <img
+      src="/img/docker-Desktop5.png"
+      alt="Docker Architecture Overview"
+      style={{ width: "100%", height: "auto", borderRadius: "15px"}}
+    />
+  </Zoom>
+</div>
+
+### Test for live deployment
+เปิด Web Browser (Chrome, Edge หรือ Safari) แล้วพิมพ์ที่ช่อง URL:
+`http://localhost:8080`
+
+หากสำเร็จ คุณจะพบข้อความ **"Welcome to nginx!"**
+
+<div className="mt-7">
+  <Zoom>
+    <img
+      src="/img/docker-Desktop6.png"
+      alt="Docker Architecture Overview"
+      style={{ width: "100%", height: "auto", borderRadius: "15px"}}
+    />
+  </Zoom>
+</div>
+
+### Cleanup
+เพื่อไม่ให้เปลืองทรัพยากรเครื่อง เมื่อทดลองเสร็จแล้วควรปิดทุกครั้ง
+1. กดปุ่ม **Stop (⏹️)** เพื่อหยุดการทำงาน
+2. กดปุ่ม **Delete (🗑️)** รูปถังขยะ เพื่อลบ Container ทิ้ง
+

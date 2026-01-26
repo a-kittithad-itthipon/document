@@ -1,1 +1,44 @@
 # Docker Compose
+
+Docker Composeช่วยให้คุณสามารถกำหนดและเรียกใช้แอปพลิเคชันแบบหลายคอนเทนเนอร์ได้ด้วยไฟล์การกำหนดค่าเพียงไฟล์เดียว
+
+ติดตั้ง Docker Compose (ปลั๊กอิน Compose v2)
+หากคุณติดตั้ง Docker จากที่เก็บ Docker อย่างเป็นทางการในขั้นตอนที่ 1 แล้ว คุณสามารถติดตั้งปลั๊กอิน Compose v2 ได้โดยใช้คำสั่งต่อไปนี้ `apt`:
+
+```bash
+sudo apt update
+sudo apt install docker-compose-plugin
+```
+ตรวจสอบการติดตั้ง:
+```bash
+docker compose version
+```
+สร้างไฟล์ Compose ที่มีขนาดเล็กที่สุด
+สร้างไดเร็กทอรีสำหรับแอปตัวอย่างและย้ายเข้าไปในไดเร็กทอรีนั้น:
+```bash
+mkdir compose-demo && cd compose-demo
+```
+สร้าง `compose.yaml` ไฟล์:
+```bash
+services:
+  web:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+```
+เริ่มบริการในโหมดพื้นหลัง:
+```bash
+docker compose up -d
+```
+ตรวจสอบว่าโปรแกรมกำลังทำงานอยู่หรือไม่:
+```bash
+docker compose ps
+```
+ดูบันทึก:
+```bash
+docker compose logs --tail=50
+```
+หยุดและยกเลิกบริการ:
+```bash
+docker compose down
+```

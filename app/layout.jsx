@@ -48,7 +48,7 @@ export default async function RootLayout({ children }) {
       >
         {/* Your additional tags should be passed as `children` of `<Head>` element */}
       </Head>
-      <body className="font-sans">
+      <body className="font-sans" suppressHydrationWarning={true}>
         <Layout
           navbar={navbar}
           pageMap={await getPageMap()}

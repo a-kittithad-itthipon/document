@@ -1,1 +1,47 @@
 # Docker Container
+
+หลังจากใช้งาน Docker ไปสักระยะ คุณจะมีคอนเทนเนอร์ที่กำลังทำงานอยู่และคอนเทนเนอร์ที่ไม่ได้ทำงานอยู่จำนวนมากในคอมพิวเตอร์ของคุณ หากต้องการดูคอนเทนเนอร์ที่กำลังทำงานอยู่ให้ใช้คำสั่ง:
+
+```bash
+docker ps
+```
+คุณจะเห็นผลลัพธ์ที่คล้ายกับต่อไปนี้:
+```bash
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+```
+ในบทเรียนนี้ คุณได้เริ่มต้นคอนเทนเนอร์สองตัว ตัวหนึ่งจาก **hello-world** อิมเมจ และอีกตัวจาก **ubuntu** อิมเมจเช่นกัน คอนเทนเนอร์ทั้งสองไม่ได้ทำงานแล้ว แต่ยังคงมีอยู่ในระบบของคุณ
+
+หากต้องการดูคอนเทนเนอร์ทั้งหมด ทั้งที่ใช้งานอยู่และที่ไม่ได้ใช้งาน ให้เรียกใช้ คำสั่ง **docker ps** โดยใช้ **-a** ตัวเลือก:
+```bash
+docker ps -a
+```
+คุณจะเห็นผลลัพธ์ที่คล้ายกับนี้:
+```bash
+CONTAINER ID   IMAGE         COMMAND   CREATED         STATUS                     PORTS     NAMES
+1c08a7a0d0e4   ubuntu        "bash"     About a minute ago   Exited (0) 7 seconds ago             dazzling_taussig
+587000e49d53   hello-world   "/hello"   5 minutes ago        Exited (0) 5 minutes ago             adoring_kowalevski
+```
+หากต้องการดูคอนเทนเนอร์ล่าสุดที่คุณสร้าง ให้ส่ง **-l** ค่าสวิตช์ต่อไปนี้:
+```bash
+docker ps -l
+CONTAINER ID   IMAGE     COMMAND   CREATED         STATUS                     PORTS     NAMES
+1c08a7a0d0e4   ubuntu    "bash"    3 minutes ago   Exited (0) 2 minutes ago             dazzling_taussig
+```
+ในการเริ่มต้นคอนเทนเนอร์ที่หยุดทำงาน ให้ใช้คำสั่ง `start` **docker start** ตามด้วย ID ของคอนเทนเนอร์หรือชื่อของคอนเทนเนอร์ ในที่นี้เราจะเริ่มต้นคอนเทนเนอร์ที่ใช้ Ubuntu โดยมี ID คือ ` 1c08a7a0d0e4start `
+```bash
+docker start 1c08a7a0d0e4
+```
+คอนเทนเนอร์จะเริ่มทำงาน และคุณสามารถใช้คำสั่งต่อdocker psไปนี้เพื่อตรวจสอบสถานะได้:
+```bash
+CONTAINER ID   IMAGE     COMMAND   CREATED         STATUS         PORTS     NAMES
+1c08a7a0d0e4   ubuntu    "bash"    6 minutes ago   Up 8 seconds             dazzling_taussig
+```
+ในการหยุดคอนเทนเนอร์ที่กำลังทำงานอยู่ ให้ใช้คำสั่ง `docker stop` docker stopตามด้วยรหัสหรือชื่อของคอนเทนเนอร์ ในครั้งนี้ เราจะใช้ชื่อที่ Docker กำหนดให้กับคอนเทนเนอร์ ซึ่งก็คือ `docker stop` dazzling_taussig:
+```bash
+docker stop dazzling_taussig
+```
+เมื่อคุณตัดสินใจแล้วว่าไม่ต้องการคอนเทนเนอร์นั้นอีก `docker rm` ต่อไป ให้ลบออกด้วยคำสั่ง โดยใช้ ID หรือชื่อของคอนเทนเนอร์ก็ได้ ใช้ `docker ps -a` คำสั่งเพื่อค้นหา ID หรือชื่อของคอนเทนเนอร์ที่เชื่อมโยงกับ `hello-world`อิมเมจ แล้วลบออก
+```bash
+docker rm adoring_kowalevski
+```
+คุณสามารถสร้างคอนเทนเนอร์ใหม่และตั้งชื่อให้ได้โดยใช้ `--name` สวิตช์ นอกจากนี้ คุณยังสามารถใช้ `--rm` สวิตช์เพื่อสร้างคอนเทนเนอร์ที่จะลบตัวเองเมื่อหยุดทำงาน ดู `docker run --help` คำสั่งเพื่อดูข้อมูลเพิ่มเติมเกี่ยวกับตัวเลือกเหล่านี้และตัวเลือกอื่นๆ
