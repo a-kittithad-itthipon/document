@@ -24,6 +24,8 @@ import { Callout, Steps, Tabs } from 'nextra/components'
 
 3.คลิก "Download for Windows-AMD64"
 
+4.เริ่มต้นการใช้งาน Docker Desktop (จำ เป็นต้อง Login เมื่อจะ Push Image ขึ้น Docker Hub)
+
 <div className="mt-7">
   <Zoom>
     <img
@@ -35,11 +37,11 @@ import { Callout, Steps, Tabs } from 'nextra/components'
 </div>
 
 
-4.เริ่มต้นการใช้งาน Docker Desktop (จำ เป็นต้อง Login เมื่อจะ Push Image ขึ้น Docker Hub)
+
 
 ## Getting Started with Docker
 
-เราจะมาลองสร้าง Web Server ง่ายๆ ด้วย Nginx เพื่อทดสอบว่า Docker ใช้งานได้จริง
+สร้าง `Web Server` ด้วย Nginx เพื่อทดสอบว่า Docker ใช้งานได้จริง
 
 ### Search Image 
 พิมพ์ `nginx` ในช่องค้นหาด้านบน และกดปุ่ม **Pull** ซึ่งเป็น Image ประเภท Web Server ให้บริการเว็บเพจและตอบสนองคำขอจากผู้ใช้
@@ -100,7 +102,7 @@ import { Callout, Steps, Tabs } from 'nextra/components'
 เปิด Web Browser (Chrome, Edge หรือ Safari) แล้วพิมพ์ที่ช่อง URL:
 `http://localhost:8080`
 
-หากสำเร็จ คุณจะพบข้อความ **"Welcome to nginx!"**
+หากสำเร็จ จะพบข้อความ **"Welcome to nginx!"**
 
 <div className="mt-7">
   <Zoom>
@@ -119,7 +121,7 @@ import { Callout, Steps, Tabs } from 'nextra/components'
 
 ## Sharing Docker Images
 
-**Image** 
+### Image
 
 คือ แม่แบบ (Template) หรือ พิมพ์เขียวของแอปพลิเคชัน ที่กําหนดไว้ว่าเมื่อ Container ถูกสร้างขึ้นจะต้องมีอะไรบ้างภายในนั้น เช่น ระบบ
 ปฏิบัติการขนาดเล็ก โปรแกรมที่จําเป็น ไลบรารี และโค้ดของแอปพลิเคชัน โดยมีขั้นตอนการ Build Image ดังนี้
@@ -145,7 +147,7 @@ docker push <username>/<repository>:<tag>
 docker pull <image-name> <username>/<repository>:<tag>
 ```
 
-**Push/Pull Image Example**
+### Push/Pull Image Example
 
 1.สร้าง Repogistories ใน Docker Hub โดยใช้คําสั่ง `docker tag my-web:1.0 ctsurin/my-web:1.0` จากนั้น Docker สร้าง Image
 ชื่อ `ctsurin/my-web Tag 1.0` ที่ใช้สําหรับ `Push Image`
@@ -156,6 +158,10 @@ docker pull <image-name> <username>/<repository>:<tag>
 
 4.Pull Image จาก Docker Hub โดยใช้คําสั่ง `docker pull ctsurin/my-web:1.0`
 
-โดย Repository หนึ่งควรเก็บ image ประเภทเดียวกัน โดยการสร้าง Repository ใหม่ จากคําสั่ง Docker Tag เช่น
+
+
+โดย **Repository** หนึ่งควรเก็บ image ประเภทเดียวกัน โดยการสร้าง Repository ใหม่ จากคําสั่ง Docker Tag เช่น
+
 1.`docker tag my-py-app:1.0 ctsurin/my-py-app:1.0`
+
 2.`docker push ctsurin/my-py-app:1.0`

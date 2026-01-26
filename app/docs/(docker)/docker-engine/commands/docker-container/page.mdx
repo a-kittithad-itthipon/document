@@ -1,47 +1,68 @@
 # Docker Container
 
-หลังจากใช้งาน Docker ไปสักระยะ คุณจะมีคอนเทนเนอร์ที่กำลังทำงานอยู่และคอนเทนเนอร์ที่ไม่ได้ทำงานอยู่จำนวนมากในคอมพิวเตอร์ของคุณ หากต้องการดูคอนเทนเนอร์ที่กำลังทำงานอยู่ให้ใช้คำสั่ง:
+## What is Docker Container
 
+**Docker Container** คือ "กล่อง" ที่ถูกสร้างขึ้นมาจาก Image เพื่อให้แอปพลิเคชันทำงานได้จริง (Runtime Instance) เปรียบเสมือนการนำแม่พิมพ์ (Image) มาปั๊มเป็นชิ้นงานที่จับต้องได้ Container จะมีสภาพแวดล้อมที่แยกขาดจากกัน (Isolated) แต่ยังคงใช้ Kernel ของ OS ร่วมกัน ทำให้กินทรัพยากรน้อยกว่า Virtual Machine เราสามารถ Start, Stop, หรือ Delete Container ได้ตลอดเวลา
+
+## Basic Commands
+
+### Container (Running)
+ตรวจสอบรายการ Container ที่กำลังทำงานอยู่ (Running) ณ ปัจจุบัน
 ```bash
 docker ps
 ```
-คุณจะเห็นผลลัพธ์ที่คล้ายกับต่อไปนี้:
+ผลลัพธ์ที่ได้จะมีลักษณะคล้ายกับตัวอย่างต่อไปนี้:
 ```bash
-CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+CONTAINER ID   IMAGE     COMMAND                  CREATED          STATUS          PORTS     NAMES
+a1b2c3d4e5f6   nginx     "/docker-entrypoint.…"   10 seconds ago   Up 9 seconds    80/tcp    my-web-server          STATUS              PORTS               NAMES
 ```
-ในบทเรียนนี้ คุณได้เริ่มต้นคอนเทนเนอร์สองตัว ตัวหนึ่งจาก **hello-world** อิมเมจ และอีกตัวจาก **ubuntu** อิมเมจเช่นกัน คอนเทนเนอร์ทั้งสองไม่ได้ทำงานแล้ว แต่ยังคงมีอยู่ในระบบของคุณ
 
-หากต้องการดูคอนเทนเนอร์ทั้งหมด ทั้งที่ใช้งานอยู่และที่ไม่ได้ใช้งาน ให้เรียกใช้ คำสั่ง **docker ps** โดยใช้ **-a** ตัวเลือก:
+
+### Container (Exited)
+ตรวจสอบรายการ Container ทั้งหมด รวมถึงตัวที่หยุดทำงานไปแล้ว (Exited)
 ```bash
 docker ps -a
 ```
-คุณจะเห็นผลลัพธ์ที่คล้ายกับนี้:
+ผลลัพธ์ที่ได้จะมีลักษณะคล้ายกับตัวอย่างต่อไปนี้:
 ```bash
 CONTAINER ID   IMAGE         COMMAND   CREATED         STATUS                     PORTS     NAMES
 1c08a7a0d0e4   ubuntu        "bash"     About a minute ago   Exited (0) 7 seconds ago             dazzling_taussig
 587000e49d53   hello-world   "/hello"   5 minutes ago        Exited (0) 5 minutes ago             adoring_kowalevski
 ```
-หากต้องการดูคอนเทนเนอร์ล่าสุดที่คุณสร้าง ให้ส่ง **-l** ค่าสวิตช์ต่อไปนี้:
+
+### Container (Option)
+ดู Container ล่าสุดที่เพิ่งสร้างหากต้องการดูเฉพาะ Container ตัวล่าสุดที่เพิ่งมีการสร้างหรือเรียกใช้งาน ให้ใช้คำสั่ง `docker ps` ควบคู่กับ Option `-l` 
 ```bash
 docker ps -l
+```
+ผลลัพธ์ที่ได้จะมีลักษณะคล้ายกับตัวอย่างต่อไปนี้:
+```bash
 CONTAINER ID   IMAGE     COMMAND   CREATED         STATUS                     PORTS     NAMES
 1c08a7a0d0e4   ubuntu    "bash"    3 minutes ago   Exited (0) 2 minutes ago             dazzling_taussig
 ```
-ในการเริ่มต้นคอนเทนเนอร์ที่หยุดทำงาน ให้ใช้คำสั่ง `start` **docker start** ตามด้วย ID ของคอนเทนเนอร์หรือชื่อของคอนเทนเนอร์ ในที่นี้เราจะเริ่มต้นคอนเทนเนอร์ที่ใช้ Ubuntu โดยมี ID คือ ` 1c08a7a0d0e4start `
+
+### Container (Start)
+การเริ่มทำงาน Container (Start) หากต้องการเริ่มการทำงานของ Container ที่อยู่ในสถานะหยุดนิ่ง (Exited) ให้ใช้คำสั่ง `docker start` ตามด้วย Container ID หรือ Name
 ```bash
 docker start 1c08a7a0d0e4
 ```
-คอนเทนเนอร์จะเริ่มทำงาน และคุณสามารถใช้คำสั่งต่อdocker psไปนี้เพื่อตรวจสอบสถานะได้:
+> *ตัวอย่าง: การเริ่ม Container Ubuntu ที่มี ID 1c08a7a0d0e4*
+ผลลัพธ์ที่ได้จะมีลักษณะคล้ายกับตัวอย่างต่อไปนี้:
 ```bash
 CONTAINER ID   IMAGE     COMMAND   CREATED         STATUS         PORTS     NAMES
 1c08a7a0d0e4   ubuntu    "bash"    6 minutes ago   Up 8 seconds             dazzling_taussig
 ```
-ในการหยุดคอนเทนเนอร์ที่กำลังทำงานอยู่ ให้ใช้คำสั่ง `docker stop` docker stopตามด้วยรหัสหรือชื่อของคอนเทนเนอร์ ในครั้งนี้ เราจะใช้ชื่อที่ Docker กำหนดให้กับคอนเทนเนอร์ ซึ่งก็คือ `docker stop` dazzling_taussig:
+
+### Container (Stop)
+การหยุดทำงาน Container (Stop) หากต้องการหยุด Container ที่กำลังทำงานอยู่ ให้ใช้คำสั่ง `docker stop` ตามด้วย ID หรือ Name
 ```bash
 docker stop dazzling_taussig
 ```
-เมื่อคุณตัดสินใจแล้วว่าไม่ต้องการคอนเทนเนอร์นั้นอีก `docker rm` ต่อไป ให้ลบออกด้วยคำสั่ง โดยใช้ ID หรือชื่อของคอนเทนเนอร์ก็ได้ ใช้ `docker ps -a` คำสั่งเพื่อค้นหา ID หรือชื่อของคอนเทนเนอร์ที่เชื่อมโยงกับ `hello-world`อิมเมจ แล้วลบออก
+> *ตัวอย่าง: การหยุด Container โดยอ้างอิงจากชื่อ dazzling_taussig*
+
+### Container (Remove)
+มื่อไม่ต้องการใช้งาน Container นั้นแล้ว สามารถลบออกจากระบบได้ด้วยคำสั่ง docker rm (ควรตรวจสอบให้แน่ใจว่า Container ถูก Stop แล้วก่อนทำการลบ)
 ```bash
 docker rm adoring_kowalevski
 ```
-คุณสามารถสร้างคอนเทนเนอร์ใหม่และตั้งชื่อให้ได้โดยใช้ `--name` สวิตช์ นอกจากนี้ คุณยังสามารถใช้ `--rm` สวิตช์เพื่อสร้างคอนเทนเนอร์ที่จะลบตัวเองเมื่อหยุดทำงาน ดู `docker run --help` คำสั่งเพื่อดูข้อมูลเพิ่มเติมเกี่ยวกับตัวเลือกเหล่านี้และตัวเลือกอื่นๆ
+> *ตัวอย่าง: การลบ Container โดยระบุชื่อ adoring_kowalevski*
