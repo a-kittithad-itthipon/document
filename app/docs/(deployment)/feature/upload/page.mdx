@@ -50,7 +50,7 @@ import { Callout } from "nextra/components";
 
 ### 2. Network & Ports
 * **Port Mapping**: ห้ามกำหนด `ports:` ในรูปแบบ Host Port (เช่น `8080:80`) เพื่อป้องกัน Port Collision (พอร์ตชนกัน) ภายใน Server
-* **Container Name**: ห้ามระบุ `container_name` แบบตายตัว (Static Name)
+* **Container Name**: ห้ามระบุ `container_name` (Static Name) ไว้ภายใน file เนื่องจากอาจซ้ำกับ Container ที่มีอยู่ระบบจึงกำหนดให้
 * **Network**: ทุก Service จำเป็นต้องเข้าร่วมเครือข่าย `lan-net` เท่านั้น หากไม่ระบุ ระบบจะไม่สามารถสร้าง Local DNS ให้ได้
 
 ### 3. File System & Volumes
