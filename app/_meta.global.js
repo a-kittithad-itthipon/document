@@ -1,14 +1,9 @@
 const system_deployment = {
   "start": "",
-  "platform": {
-    items: {
-      "general": "",
-      "active-site": "",
-      "dashboard": "",
-    }
-  },
+  "general": "",
   "feature": {
     items: {
+      "active-site": "",
       "require": "",
       "upload": "",
     }
