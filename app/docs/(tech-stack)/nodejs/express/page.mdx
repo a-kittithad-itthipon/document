@@ -103,9 +103,8 @@ app.listen(port, '0.0.0.0', () => {
 ## Docker Compose
 
 <Callout type="info">
-  หมายเหตุการระบุพอร์ต เนื่องจากระบบใช้การระบุตัวตนผ่าน Local DNS ของแพลตฟอร์ม
-  บริการ Express รันบน Port 3000 ภายในเครือข่ายโดยตรง โดยไม่ต้องทำการ Map Port
-  (Port Forwarding) ออกมายังภายนอก
+  **หมายเหตุการระบุพอร์ต** เนื่องจากระบบใช้การระบุตัวตนผ่าน **Local DNS** ของแพลตฟอร์มบริการ Express  
+  รันบน Port 3000 ภายในเครือข่ายโดยตรง โดยไม่ต้องทำการ Map Port (Port Forwarding) ออกมายังภายนอก
 </Callout>
 
 ### Upload On Platform
@@ -131,8 +130,7 @@ networks:
 ```
 
 <Callout type="warning">
-  {" "}
-  external: true คือการเข้าร่วม Network ชื่อ lan-net ที่ถูกสร้างไว้เเล้ว{" "}
+  external: true คือการเข้าร่วม Network ชื่อ lan-net ที่ถูกสร้างไว้เเล้ว
 </Callout>
 
 ### Full Docker Compose

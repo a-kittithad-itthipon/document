@@ -1,1 +1,188 @@
+import { FileTree } from "nextra/components";
+import { Callout, Steps } from "nextra/components";
+
 # Next.js
+
+เอกสารนี้อธิบายขั้นตอนการ Deploy เว็บแอปพลิเคชัน **Next.js** โดยใช้ **Docker Compose**
+เหมาะสำหรับการใช้งานภายในเครือข่าย **LAN** การ Deploy Next.js ด้วย Docker จะใช้ **Node.js Image**
+เพื่อ Build และ Run Application ในโหมด Production
+
+---
+
+## Project Structure
+
+โครงสร้างไฟล์ของโปรเจกต์ Next.js (App Router) ที่ใช้ร่วมกับ Docker Compose โดยแยกส่วนของ Source Code ไว้ในโฟลเดอร์ `app` เพื่อให้ง่ายต่อการ Mount Volume
+
+<FileTree>
+  <FileTree.Folder name="project" defaultOpen>
+    <FileTree.File name="docker-compose.yml" />
+    <FileTree.Folder name="app" defaultOpen>
+      <FileTree.Folder name="app">
+        <FileTree.File name="layout.tsx" />
+        <FileTree.File name="page.tsx" />
+      </FileTree.Folder>
+      <FileTree.File name="next.config.ts" />
+      <FileTree.File name="package.json" />
+      <FileTree.File name=".gitignore" />
+      <FileTree.File name="__more" />
+    </FileTree.Folder>
+  </FileTree.Folder>
+</FileTree>
+
+## Application Components
+
+### Package Configuration
+
+ไฟล์ `package.json` สำหรับระบุ Script การ Build และ Library ที่จำเป็น (Next.js, React)
+
+```json filename="app/package.json"
+{
+  "name": "next-docker",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "14.1.0",
+    "react": "^18",
+    "react-dom": "^18"
+  }
+}
+```
+
+### Application Entry Point (Page)
+
+ตัวอย่างหน้าเว็บหลัก `page.jsx` หรือ `page.tsx`
+
+```json filename="app/app/page.tsx"
+export default function Home() {
+  return (
+    <main style={{
+      height: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+      fontFamily: 'Kanit, sans-serif'
+    }}>
+      <h1 style={{ fontSize: '80px', margin: 0 }}>Hello From Next.js</h1>
+      <p style={{ fontSize: '24px', color: '#666' }}>Docker Compose Deployment</p>
+    </main>
+  );
+}
+```
+
+### Root Layout
+
+โครงสร้างหลักของ HTML (layout.tsx)
+
+```json filename="app/app/layout.tsx"
+export const metadata = {
+  title: 'Next.js Docker',
+  description: 'Deployed with Docker Compose',
+}
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <head>
+        <link href="[https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap](https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap)" rel="stylesheet" />
+      </head>
+      <body style={{ margin: 0 }}>{children}</body>
+    </html>
+  )
+}
+```
+
+## Docker Compose
+
+<Callout type="info">
+  **หมายเหตุการระบุพอร์ต** เนื่องจากระบบใช้การระบุตัวตนผ่าน **Local DNS**
+  ของแพลตฟอร์มบริการ Next.js รันบน Port 3000 ภายในเครือข่ายโดยตรง
+  โดยไม่ต้องทำการ Map Port (Port Forwarding) ออกมายังภายนอก
+</Callout>
+
+### Upload On Platform
+
+```bash filename="docker-compose.yml"
+version: "3.8"
+
+services:
+  nextjs:
+    image: node:18-alpine
+    working_dir: /app
+    volumes:
+      - ./app:/app
+    environment:
+      - NODE_ENV=production
+    command: >
+      sh -c "npm install && npm run build && npm start"
+    restart: unless-stopped
+    networks:
+      - lan-net
+
+networks:
+  lan-net:
+    external: true
+```
+
+<Callout type="warning">
+  **Command Explanation** คำสั่ง **npm install** && **npm run build** && **npm
+  start** จะทำการติดตั้ง Package และ Build Project ใหม่ทุกครั้ง ที่เริ่ม
+  Container ซึ่งอาจใช้เวลาสักครู่ในการ Start (เหมาะสำหรับการ Deploy แบบ Basic
+  ที่ไม่ต้องการสร้าง Dockerfile แยก)
+</Callout>
+
+### Full Docker Compose
+
+```bash filename="docker-compose.yml"
+# ระบุเวอร์ชันของรูปแบบไฟล์ Docker Compose
+version: "3.8"
+
+services:
+  # บริการ Web Server สำหรับรัน Next.js Application
+  nextjs:
+    # ใช้ Node.js 18 รุ่น alpine (ขนาดเล็ก) เป็นฐาน
+    image: node:18-alpine
+
+    # กำหนดชื่อคอนเทนเนอร์เพื่อให้ง่ายต่อการจัดการ
+    container_name: nextjs-app
+
+    # กำหนดไดเรกทอรีทำงานหลักภายใน Container
+    working_dir: /app
+
+    # ตั้งค่า Environment Variable เป็น Production เพื่อประสิทธิภาพที่ดีที่สุด
+    environment:
+      - NODE_ENV=production
+
+    # เชื่อมต่อโฟลเดอร์ Source Code จากเครื่องแม่ข่ายเข้าสู่คอนเทนเนอร์
+    volumes:
+      - ./app:/app
+
+    # คำสั่งรันเมื่อเริ่ม Container:
+    # 1. npm install: ติดตั้ง Dependencies
+    # 2. npm run build: ทำการ Build Next.js (Create .next folder)
+    # 3. npm start: เริ่มต้น Server
+    command: >
+      sh -c "npm install && npm run build && npm start"
+
+    # กำหนดให้คอนเทนเนอร์เริ่มทำงานใหม่อัตโนมัติเมื่อเกิดข้อผิดพลาด
+    restart: unless-stopped
+
+    # เชื่อมต่อคอนเทนเนอร์เข้ากับเครือข่ายที่กำหนด
+    networks:
+      - lan-net
+
+    # เปิดพอร์ตภายในคอนเทนเนอร์สำหรับการสื่อสารภายในเครือข่าย Docker
+    expose:
+      - "3000"
+
+networks:
+  # กำหนดเครือข่าย Docker ที่สร้างไว้ล่วงหน้า
+  lan-net:
+    external: true
+```
