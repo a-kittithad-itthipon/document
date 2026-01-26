@@ -117,5 +117,45 @@ import { Callout, Steps, Tabs } from 'nextra/components'
 1. กดปุ่ม **Stop** เพื่อหยุดการทำงาน
 2. กดปุ่ม **Delete** รูปถังขยะ เพื่อลบ Container ทิ้ง
 
-## Building and Sharing Docker Images
+## Sharing Docker Images
 
+**Image** 
+
+คือ แม่แบบ (Template) หรือ พิมพ์เขียวของแอปพลิเคชัน ที่กําหนดไว้ว่าเมื่อ Container ถูกสร้างขึ้นจะต้องมีอะไรบ้างภายในนั้น เช่น ระบบ
+ปฏิบัติการขนาดเล็ก โปรแกรมที่จําเป็น ไลบรารี และโค้ดของแอปพลิเคชัน โดยมีขั้นตอนการ Build Image ดังนี้
+1.สร้าง Dockerfile 
+2.Buid Image โดยใช้คําสั่ง `docker build -t <image-name>:<tag> <path>` โดยใช้ Path ใน Floder ที่มี Dockerfile
+
+### Push/Pull Image
+
+* สร้าง Repogistories ใน Docker Hub โดยใช้คําสั่ง `docker tag <image:tag> <username/repositories>:<tag>`
+
+```bash
+docker tag <image:tag> <username/repositories>:<tag>
+```
+
+* Push Image โดยใช้คําสั่ง `docker push <username>/<repository>:<tag>`
+
+```bash
+docker push <username>/<repository>:<tag>
+```
+* Pull Image จาก Docker Hub โดยใช้คําสั่ง `docker tag <image-name> <username>/<repository>:<tag>`
+
+```bash
+docker pull <image-name> <username>/<repository>:<tag>
+```
+
+**Push/Pull Image Example**
+
+1.สร้าง Repogistories ใน Docker Hub โดยใช้คําสั่ง `docker tag my-web:1.0 ctsurin/my-web:1.0` จากนั้น Docker สร้าง Image
+ชื่อ `ctsurin/my-web Tag 1.0` ที่ใช้สําหรับ `Push Image`
+
+2.Push Image `docker push ctsurin/my-web:1.0` 
+
+3.ตรวจสอบ Repository ที่ Myhub (https://login.docker.com/u/login/)
+
+4.Pull Image จาก Docker Hub โดยใช้คําสั่ง `docker pull ctsurin/my-web:1.0`
+
+โดย Repository หนึ่งควรเก็บ image ประเภทเดียวกัน โดยการสร้าง Repository ใหม่ จากคําสั่ง Docker Tag เช่น
+1.`docker tag my-py-app:1.0 ctsurin/my-py-app:1.0`
+2.`docker push ctsurin/my-py-app:1.0`

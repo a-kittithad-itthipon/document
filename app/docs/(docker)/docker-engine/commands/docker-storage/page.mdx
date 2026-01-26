@@ -1,1 +1,42 @@
 # Docker Storage
+
+## Docker Storage
+
+การจัดเก็บข้อมูลถาวรสําหรับคอนเทนเนอร์ เพื่อให้ข้อมูลยังคงอยู่ในขณะที่ Container ถูกลบ สร้างใหม่ หรือถูกปรับปรุงเวอร์ชัน โดยวิธีการ
+เก็บข้อมูลมีดังนี้
+
+### Docker Volumes
+
+คือพื้นที่จัดเก็บข้อมูลที่ Docker จัดการให้  โดยตรง โดยระบบจะสร้างและบริหารจัดการโครงสร้างไฟล์ภายในไดเรกทอรีมาตรฐานของ Docker
+เช่นในระบบ Linux จะอยู่ที่ `/var/lib/docker/volumes/<volume-name>/_data` เมื่อเชื่อม `Volume` กับ `Container` ข้อมูลที่เขียนลง
+ใน Path ภายใน Container จะถูกเก็บไว้ใน Volume ดังกล่าว สร้างโดยใช้คําสั่ง `docker volume create <name>` 
+
+**Docker Volume Example**
+
+1.สร้าง Container Database โดยใช้การ Volume (หากยังไม่มี Volume mydata Docker จะทําการสร้างอัตโนมัติ)
+
+```bash
+docker run -d --name mariadb -e MYSQL_ROOT_PASSWORD=1234 -p 3306:3306 -v mydata:/var/lib/mysql
+mariadb:latest
+```
+2.ทดสอบเพิ่มข้อมูลไปยังฐานข้อมูล โดยการใช้ Exec 
+
+3.ลบ Image และ Container จากนั้นรัน Container Mariadb อีกครั้งและตรวจสอบฐานข้อมูลที่สร้าง (mydb)
+
+### Bind Mounts
+
+คือการเชื่อม Floder หรือ File จากเครื่อง Host ไปยัง Container โดยตรง Container ใช้ Floder จาก Host เป็น Floder ภายในตัวเอง
+เหมาะสําหรับ การพัฒนาโปรแกรม ใช้แก้ไขไฟล์โค้ด และทดสอบโปรแกรม โดยสามารถดูผลได้ทันทีทําให้ไม่ต้อง `Rebuild Image` ซึ่งสามารถ
+เปลี่ยนได้เฉพาะไฟล์หรือโปรแกรมภายใน Container ไม่สามารถอัปเดต `Docker Image` หรือเวอร์ชันของ Container ได้โดยตรง
+
+Bind Mount Example ()
+
+1.สามารถใช้ Path ที่พัฒนาโปรแกรมทับ Path ของ Container ได้โดยใช้ Image ที่ Biuld เอาไว้แล้ว เช่น Flask รันที่ `Floder /app`
+ภายใน Container สามารถทํา Bind Mount โดยใช้ `-v` และควรเปิด `Debug Mode` หากต้องการแสดงผลการแก้ไข โดยไม่ `Restart`
+Container
+
+```bash
+docker run -d --name my-flask-app -p 5000:5000 -v D:/my_project/flask-app:/app my-py-app:1.0
+```
+
+2.สามารถแก้ไขได้จาก Host
