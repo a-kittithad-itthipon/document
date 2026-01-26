@@ -23,9 +23,10 @@ const basicItems = {
         items: {
           "docker-img": "",
           "docker-container": "",
-          "docker-run": "",
           "docker-network": "",
-          "docker-compose": ""
+          "docker-storage": "",
+          "docker-run": "",
+          "docker-compose": "",
         }
       },
     }
