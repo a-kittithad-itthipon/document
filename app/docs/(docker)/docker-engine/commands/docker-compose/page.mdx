@@ -2,51 +2,35 @@
 
 ## What is Docker Compose
 
-Docker Compose เป็นเครื่องมือสำหรับจัดการแอปพลิเคชันที่ประกอบด้วยหลาย Container (เช่น Web, Database, Cache) โดยใช้ไฟล์ `docker-compose.yml` เพียงไฟล์เดียวในการควบคุม ช่วยให้เราไม่ต้องพิมพ์คำสั่ง `docker run` ยาวๆ หลายครั้ง
-Docker Composeช่วยให้คุณสามารถกำหนดและเรียกใช้แอปพลิเคชันแบบหลายคอนเทนเนอร์ได้ด้วยไฟล์การกำหนดค่าเพียงไฟล์เดียว
-
+**Docker Compose** เป็นเครื่องมือสำหรับการบริหารจัดการแอปพลิเคชันที่ประกอบขึ้นจากหลายคอนเทนเนอร์ (Multi-container Applications) โดยอาศัยไฟล์ `docker-compose.yml` เพียงไฟล์เดียวในการกำหนดค่าและควบคุมการทำงานของบริการต่าง ๆ (Services) เช่น Web Server, Database หรือ Caching System ช่วยลดความซับซ้อนของการใช้คำสั่ง `docker run` หลายครั้ง และช่วยให้การจัดการสภาพแวดล้อมของแอปพลิเคชันเป็นไปอย่างมีประสิทธิภาพและเป็นมาตรฐานเดียวกัน
 ## Basic Commands
 
-### Compose (Up)
-คำสั่งสำหรับสร้างและเริ่มการทำงานของ Services ทั้งหมดที่ระบุไว้ในไฟล์ `docker-compose.yml` โดย `-d` หมายถึงให้ทำงานแบบเบื้องหลัง
+###  Up
+คำสั่งสำหรับสร้าง (Create) และเริ่มต้นการทำงาน (Start) ของ Services ทั้งหมดตามที่ระบุไว้ใน docker-compose.yml โดยสามารถใช้พารามิเตอร์ `-d` (Detached Mode) เพื่อสั่งให้ระบบประมวลผลในเบื้องหลังโดยไม่ยึดครองหน้าจอ Terminal
 ```bash
+# docker compose up [options]
 docker compose up -d
 ```
-ผลลัพธ์ที่ได้จะมีลักษณะคล้ายกับตัวอย่างต่อไปนี้:
-```bash
-[+] Running 3/3
- ✔ Network app-network        Created
- ✔ Container db-mysql         Started
- ✔ Container web-app          Started
-```
 
-### Compose (List)
-คำสั่งสำหรับตรวจสอบรายชื่อและสถานะของ Container ทั้งหมดที่ทำงานอยู่ภายใต้โปรเจกต์ (หรือไฟล์ `docker-compose.yml`) นั้นๆ เพื่อดูว่า Service ใดกำลังทำงานอยู่ (Up) หรือหยุดทำงาน (Exited) รวมถึงดู Port ที่เปิดใช้งาน
+### List
+ตรวจสอบรายการและสถานะของคอนเทนเนอร์ทั้งหมดที่ทำงานอยู่ภายใต้โปรเจกต์ปัจจุบัน เพื่อดูสถานะการทำงาน (Status) เช่น กำลังทำงาน (Up) หรือหยุดทำงาน (Exited) รวมถึงตรวจสอบการเชื่อมต่อพอร์ต (Port Mapping) ของแต่ละบริการ    
+
 ```bash
 docker compose ps
 ```
 
-### Compose (Logs)
-คำสั่งสำหรับเรียกดู Log การทำงานของทุก Services ที่รันอยู่ภายใต้ Compose นั้นๆ (ใช้ `-f` หากต้องการดูแบบ Real-time)
+### Logs
+เรียกดูบันทึกเหตุการณ์ (Logs) ของบริการต่าง ๆ ที่กำลังทำงานอยู่ภายใต้ Docker Compose เพื่อใช้ในการตรวจสอบข้อผิดพลาดและติดตามสถานะของแอปพลิเคชัน (สามารถใช้ -f เพื่อติดตามผลลัพธ์แบบ Real-time)
+
 ```bash
-docker compose logs 
-```
-ผลลัพธ์ที่ได้จะมีลักษณะคล้ายกับตัวอย่างต่อไปนี้:
-```bash
-web-app  | Listening on port 80...
-db-mysql | Database initialized...
-web-app  | Received request from 172.18.0.1
+# docker compose logs [options]
+docker compose logs -f
 ```
 
-### Compose (Down)
-คำสั่งสำหรับหยุดและลบ Containers, Networks และ Volumes ที่ถูกสร้างขึ้นโดย Docker Compose (เป็นการเคลียร์ระบบให้สะอาด)
+### Down
+คำสั่งสำหรับยุติการทำงานและลบทรัพยากรทั้งหมดที่ถูกสร้างขึ้นโดย Docker Compose ได้แก่ คอนเทนเนอร์ (Containers),   
+เครือข่าย (Networks) และพื้นที่จัดเก็บข้อมูล (Volumes) เพื่อคืนทรัพยากรและนำระบบกลับสู่สถานะเริ่มต้น
+
 ```bash
 docker compose down
-```
-ผลลัพธ์ที่ได้จะมีลักษณะคล้ายกับตัวอย่างต่อไปนี้:
-```bash
-[+] Running 3/3
- ✔ Container web-app          Removed
- ✔ Container db-mysql         Removed
- ✔ Network app-network        Removed
 ```

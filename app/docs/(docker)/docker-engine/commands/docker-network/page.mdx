@@ -1,80 +1,53 @@
 # Docker Network
 
-## What is Docker Network
-Docker Network คือระบบที่จัดการการเชื่อมต่อสื่อสารระหว่าง Container ด้วยกันเอง หรือระหว่าง Container กับโลกภายนอก (Internet) โดยปกติเมื่อเราสร้าง Container ขึ้นมา Docker จะทำการสร้าง Network วงภายในให้โดยอัตโนมัติเพื่อให้ Container สามารถคุยกันได้ แต่เราก็สามารถสร้างและจัดการ Network เองได้เพื่อความปลอดภัยและการจัดกลุ่มของบริการ (Services) ที่ดีขึ้น
+## What is Docker Network?
 
-## Driver
-Docker มีรูปแบบการเชื่อมต่อเครือข่าย (Network Drivers) หลายแบบเพื่อให้เหมาะสมกับการใช้งานที่แตกต่างกัน โดยมี 3 ประเภทหลักที่ควรรู้จัก ดังนี้:
+**Docker Network** คือ ระบบบริหารจัดการการเชื่อมต่อสื่อสารระหว่าง Container ด้วยกันเอง หรือระหว่าง Container กับเครือข่ายภายนอก (Internet)
+
+โดยปกติเมื่อมีการสร้าง Container ระบบ Docker จะทำการสร้างวงเครือข่ายภายในให้อัตโนมัติเพื่อให้ Container สามารถสื่อสารกันได้ อย่างไรก็ตาม การสร้างและบริหารจัดการ Network ด้วยตนเองจะช่วยเพิ่มความปลอดภัยและช่วยในการจัดกลุ่มของบริการ (Services) ให้เป็นระบบมากยิ่งขึ้น
+
 
 ### Bridge (Default)
-เป็นรูปแบบพื้นฐานที่สุดและเป็นค่าเริ่มต้น (Default) เมื่อติดตั้ง Docker โดย Container ที่อยู่ใน Bridge Network เดียวกันจะสามารถสื่อสารกันผ่าน IP Address ภายในได้ แต่จะไม่สามารถเข้าถึงได้จากภายนอกโดยตรง เว้นแต่จะมีการ Map Port ออกมา เหมาะสำหรับการรัน Application ทั่วไปบนเครื่องเดียว
+
+เป็นรูปแบบมาตรฐานและเป็นค่าเริ่มต้น (Default) เมื่อติดตั้ง Docker โดย Container ที่อยู่ใน Bridge Network วงเดียวกันจะสามารถสื่อสารกันผ่าน IP Address ภายในได้ แต่จะไม่สามารถถูกเข้าถึงได้จากภายนอกโดยตรง (Isolated) ยกเว้นกรณีที่มีการทำ Port Mapping
 
 ### Host
-เป็นรูปแบบที่ยกเลิกการแยกส่วนเครือข่าย (Network Isolation) ของ Container ออกไป ทำให้ Container ใช้ Network Interface และ IP Address เดียวกับเครื่อง Host โดยตรง ข้อดีคือประสิทธิภาพสูง (ไม่ต้องมีการแปลง NAT) แต่ข้อเสียคือ Port อาจจะชนกับ Service อื่นๆ บนเครื่อง Host ได้ง่าย
+เป็นรูปแบบที่มีการยกเลิกการแยกส่วนเครือข่าย (Network Isolation) ของ Container ส่งผลให้ Container ใช้งาน Network Interface และ IP Address ร่วมกับเครื่อง Host โดยตรง
 
 ### None
-เป็นรูปแบบที่ตัดการเชื่อมต่อเครือข่ายทั้งหมดของ Container นั้นๆ คือไม่มี IP Address และไม่สามารถออกเน็ตหรือคุยกับ Container อื่นได้เลย เหมาะสำหรับงานที่ต้องการความปลอดภัยสูงสุดหรือทำงานแบบ Offline เท่านั้
-
+เป็นรูปแบบที่ตัดการเชื่อมต่อเครือข่ายทั้งหมดของ Container กล่าวคือ Container จะไม่มี IP Address และไม่สามารถเชื่อมต่ออินเทอร์เน็ตหรือสื่อสารกับ Container อื่นได้  
+* **ความเหมาะสม** งานที่ต้องการความปลอดภัยสูงสุด หรือการประมวลผลแบบ Offline
 
 
 ## Basic Commands
 
-### Network (List)
-คำสั่งสำหรับตรวจสอบรายชื่อ Network ทั้งหมดที่มีอยู่ในเครื่อง เพื่อดูว่ามี Driver แบบไหนบ้างและชื่ออะไร
+### List Networks
+คำสั่งสำหรับตรวจสอบรายชื่อ Network ทั้งหมดที่มีอยู่ในระบบ เพื่อตรวจสอบชนิดของ Driver และชื่อ Network
+
 ```bash
 docker network ls
 ```
-ผลลัพธ์ที่ได้จะมีลักษณะคล้ายกับตัวอย่างต่อไปนี้:
-```bash
-NETWORK ID     NAME      DRIVER    SCOPE
-96500d057796   bridge    bridge    local
-595804362149   host      host      local
-1b2061225562   none      null      local
-```
 
-### Network (Create)
-คำสั่งสำหรับสร้าง Network วงใหม่ขึ้นมาเอง (โดยปกติจะเป็น Driver แบบ Bridge) เพื่อใช้จัดกลุ่ม Container ให้สื่อสารกันเฉพาะในวงนี้
+### Create Network
+คำสั่งสำหรับสร้าง Network วงใหม่ (โดยปกติจะเป็น Driver แบบ Bridge) เพื่อใช้ในการจัดกลุ่ม Container ให้สื่อสารกันเฉพาะภายในวงนี้
+
 ```bash
+# docker network create <network_name>
 docker network create my-app-net
 ```
-ผลลัพธ์ที่ได้จะมีลักษณะคล้ายกับตัวอย่างต่อไปนี้:
+
+### Inspect Network
+คำสั่งสำหรับเรียกดูรายละเอียดเชิงลึกของ Network เช่น รายชื่อ Container ที่เชื่อมต่ออยู่ หรือช่วง IP Address (Subnet) ของวงเครือข่าย
+
 ```bash
-c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6
-```
-### Network (Inspect)
-คำสั่งสำหรับดูรายละเอียดเชิงลึกของ Network นั้นๆ เช่น ดูว่ามี Container ตัวไหนเชื่อมต่ออยู่บ้าง หรือดู IP Range (Subnet) ของวงเครือข่าย
-```bash
+# docker network inspect <network_name>
 docker network inspect bridge
 ```
-ผลลัพธ์ที่ได้จะมีลักษณะคล้ายกับตัวอย่างต่อไปนี้:
-```bash
-[
-    {
-        "Name": "bridge",
-        "Id": "96500d057796...",
-        "IPAM": {
-            "Config": [
-                {
-                    "Subnet": "172.17.0.0/16"
-                }
-            ]
-        },
-        "Containers": {
-            "a1b2c3d4...": {
-                "Name": "my-web-server",
-                "IPv4Address": "172.17.0.2/16"
-            }
-        }
-    }
-]
-```
 
-### Network (Remove)
-คำสั่งสำหรับลบ Network ที่ไม่ได้ใช้งานออกจากระบบ (ต้องแน่ใจว่าไม่มี Container ใดๆ เชื่อมต่ออยู่กับ Network นั้นก่อนทำการลบ)
+### Remove Network
+คำสั่งสำหรับลบ Network ที่ไม่ได้ใช้งานออกจากระบบ
+
 ```bash
+# docker network rm <network_name>
 docker network rm my-app-net
-```
-ผลลัพธ์ที่ได้จะมีลักษณะคล้ายกับตัวอย่างต่อไปนี้:
-```bash
-my-app-net
 ```

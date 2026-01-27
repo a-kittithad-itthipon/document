@@ -1,33 +1,40 @@
 # Docker Storage
 
-## What is Docker Storage
-Docker Storage คือกลไกในการจัดการข้อมูล (Data) ของ Container ให้มีความยั่งยืน (Persistence) เนื่องจากโดยปกติแล้วข้อมูลที่เกิดขึ้นภายใน Container จะเป็นข้อมูลชั่วคราว (Ephemeral) ซึ่งจะหายไปทันทีเมื่อ Container ถูกลบ ดังนั้นหากเราต้องการเก็บรักษาข้อมูลสำคัญ เช่น ฐานข้อมูล หรือ Log files เราจำเป็นต้องใช้ Docker Storage เพื่อ Map พื้นที่จัดเก็บข้อมูลออกมาไว้นอก Container
+## What is Docker Storage?
 
+**Docker Storage** คือ กลไกในการบริหารจัดการข้อมูล (Data) ของ Container ให้มีความยั่งยืน (**Persistence**)
+โดยปกติข้อมูลที่เกิดขึ้นภายใน Container จะมีสถานะเป็นข้อมูลชั่วคราว (**Ephemeral**) ซึ่งจะสูญหายทันทีเมื่อ Container ถูกลบ ดังนั้นในกรณีที่ต้องการเก็บรักษาข้อมูลสำคัญ เช่น ฐานข้อมูล (Database) หรือไฟล์บันทึกการทำงาน (Log files) จึงจำเป็นต้องใช้งาน Docker Storage เพื่อทำการ Map พื้นที่จัดเก็บข้อมูลออกมาไว้นอก Container
 ## Docker Volumes
-**Docker Volumes** เป็นวิธีมาตรฐานและปลอดภัยที่สุดในการจัดเก็บข้อมูล โดย Docker จะทำการสร้างพื้นที่จัดเก็บข้อมูลขึ้นมาเอง (Managed by Docker) ภายใต้ path `/var/lib/docker/volumes/<volume-name>/_data` บนเครื่อง Host วิธีนี้ทำให้เราไม่ต้องกังวลเรื่อง Path ของเครื่อง Host และสามารถแชร์ข้อมูลระหว่าง Container ได้ง่าย
+
+**Docker Volumes** เป็นวิธีการจัดเก็บข้อมูลที่มีมาตรฐานและมีความปลอดภัยสูง โดย Docker จะเป็นผู้บริหารจัดการพื้นที่จัดเก็บข้อมูลดังกล่าวโดยตรง (Managed by Docker) ภายใต้ Path `/var/lib/docker/volumes/<volume-name>/_data` บนเครื่อง Host
+วิธีการนี้ช่วยลดความซับซ้อนในการจัดการ Path ของเครื่อง Host และเอื้ออำนวยต่อการแชร์ข้อมูลระหว่าง Container หลายตัว
 
 ### Volume Example
-การสร้าง Volume ชื่อ my-data และนำไป Mount เข้ากับ Container (เช่น Nginx)
-```bash
-# สร้าง Volume ใหม่
-docker volume create my-data
 
-# รัน Container โดย Mount volume 'my-data' ไปที่ '/app' ใน Container
+ตัวอย่างการสร้าง Volume ชื่อ `my-data` และนำไป Mount เข้ากับ Container (เช่น Nginx)
+```bash
+# docker volume create <vol_name>
+docker volume create my-data
+```
+เมื่อสร้างเสร็จแล้ว สามารถนำไปใช้งานกับ Container ได้ดังนี้
+```bash
+# docker run -v <volume_name>:<container_path> <image_name>
 docker run -d -v my-data:/app nginx
 ```
-การตรวจสอบรายการ Volume ที่มีอยู่
 
+การตรวจสอบรายการ Volume ที่มีอยู่
 ```bash
 docker volume ls
 ```
 
-## Bind Mounts
-**Bind Mounts** เป็นวิธีที่เชื่อมโยงไฟล์หรือโฟลเดอร์จากตำแหน่งที่ระบุเจาะจงบนเครื่อง Host (Host Path) เข้ากับ Container โดยตรง วิธีนี้มีความยืดหยุ่นสูงและนิยมใช้ในขั้นตอนการพัฒนา (Development) เช่น การแก้ Source code บนเครื่องเราแล้วให้ผลลัพธ์เปลี่ยนใน Container ทันที
+## Bind MountsBind Mounts 
+การเชื่อมโยงไฟล์หรือไดเรกทอรีจากตำแหน่งที่ระบุเจาะจงบนเครื่อง Host (Host Path) เข้ากับ Container โดยตรง
+วิธีการนี้มีความยืดหยุ่นสูงและเหมาะสมสำหรับการพัฒนาซอฟต์แวร์ (Development) เนื่องจากการแก้ไข Source Code บนเครื่อง Host จะส่งผลให้ข้อมูลภายใน Container เปลี่ยนแปลงตามทันที (Hot Reload)
 
 ### Bind Mounts Example
-การรัน Container โดยเชื่อมโฟลเดอร์ปัจจุบัน (`$(pwd)`) บนเครื่อง Host เข้าไปที่ `/usr/share/nginx/html` ใน Container
+สำหรับการใช้งานบนระบบปฏิบัติการ Windows แนะนำให้ระบุ Path เป็นแบบเต็ม (Absolute Path) และควรใช้เครื่องหมาย Forward Slash ( / ) แทน Backslash ( \ ) เพื่อป้องกันข้อผิดพลาดในการตีความคำสั่ง
+
 ```bash
-# ใช้ -v [Host Path]:[Container Path]
-docker run -d -p 8080:80 -v $(pwd)/html:/usr/share/nginx/html nginx
+# docker run -v <drive_letter>:/<path>:<container_path> <image_name>
+docker run -d -p 8080:80 -v D:/project/html:/usr/share/nginx/html nginx
 ```
-> *หากเราแก้ไขไฟล์ index.html ในโฟลเดอร์ html บนเครื่อง Host หน้าเว็บใน Container ก็จะเปลี่ยนตามทันที*

@@ -1,68 +1,55 @@
 # Docker Container
 
-## What is Docker Container
+## What is Docker Container?
 
-**Docker Container** คือ "กล่อง" ที่ถูกสร้างขึ้นมาจาก Image เพื่อให้แอปพลิเคชันทำงานได้จริง (Runtime Instance) เปรียบเสมือนการนำแม่พิมพ์ (Image) มาปั๊มเป็นชิ้นงานที่จับต้องได้ Container จะมีสภาพแวดล้อมที่แยกขาดจากกัน (Isolated) แต่ยังคงใช้ Kernel ของ OS ร่วมกัน ทำให้กินทรัพยากรน้อยกว่า Virtual Machine เราสามารถ Start, Stop, หรือ Delete Container ได้ตลอดเวลา
+**Docker Container** คือ "กล่อง" ที่ถูกสร้างขึ้นมาจาก Image เพื่อให้แอปพลิเคชันทำงานได้จริง (Runtime Instance) เปรียบเสมือนการนำแม่พิมพ์ (Image) มาปั๊มเป็นชิ้นงานที่จับต้องได้
+Container จะมีสภาพแวดล้อมที่แยกขาดจากกัน (Isolated) แต่ยังคงใช้ Kernel ของ OS ร่วมกัน ทำให้ใช้ทรัพยากรน้อยกว่า Virtual Machine โดยเราสามารถสั่ง Start, Stop หรือ Delete Container ได้ตลอดเวลา
 
 ## Basic Commands
 
-### Container (Running)
-ตรวจสอบรายการ Container ที่กำลังทำงานอยู่ (Running) ณ ปัจจุบัน
+### List Running Containers
+
+ใช้สำหรับตรวจสอบรายการ Container ที่มีสถานะกำลังทำงานอยู่ (**Running**) ณ ปัจจุบัน
+
 ```bash
 docker ps
 ```
-ผลลัพธ์ที่ได้จะมีลักษณะคล้ายกับตัวอย่างต่อไปนี้:
-```bash
-CONTAINER ID   IMAGE     COMMAND                  CREATED          STATUS          PORTS     NAMES
-a1b2c3d4e5f6   nginx     "/docker-entrypoint.…"   10 seconds ago   Up 9 seconds    80/tcp    my-web-server          STATUS              PORTS               NAMES
-```
 
+### List All Containers
+ใช้สำหรับดูรายการ Container ทั้งหมดที่มีในเครื่อง รวมถึงตัวที่หยุดทำงานไปแล้ว (Exited)
 
-### Container (Exited)
-ตรวจสอบรายการ Container ทั้งหมด รวมถึงตัวที่หยุดทำงานไปแล้ว (Exited)
 ```bash
 docker ps -a
 ```
-ผลลัพธ์ที่ได้จะมีลักษณะคล้ายกับตัวอย่างต่อไปนี้:
-```bash
-CONTAINER ID   IMAGE         COMMAND   CREATED         STATUS                     PORTS     NAMES
-1c08a7a0d0e4   ubuntu        "bash"     About a minute ago   Exited (0) 7 seconds ago             dazzling_taussig
-587000e49d53   hello-world   "/hello"   5 minutes ago        Exited (0) 5 minutes ago             adoring_kowalevski
-```
 
-### Container (Option)
-ดู Container ล่าสุดที่เพิ่งสร้างหากต้องการดูเฉพาะ Container ตัวล่าสุดที่เพิ่งมีการสร้างหรือเรียกใช้งาน ให้ใช้คำสั่ง `docker ps` ควบคู่กับ Option `-l` 
+### View Latest Container
+หากต้องการดูเฉพาะ Container ตัวล่าสุดที่เพิ่งมีการสร้างหรือเรียกใช้งาน ให้ใช้ Option -l (Latest)
+
 ```bash
 docker ps -l
 ```
-ผลลัพธ์ที่ได้จะมีลักษณะคล้ายกับตัวอย่างต่อไปนี้:
-```bash
-CONTAINER ID   IMAGE     COMMAND   CREATED         STATUS                     PORTS     NAMES
-1c08a7a0d0e4   ubuntu    "bash"    3 minutes ago   Exited (0) 2 minutes ago             dazzling_taussig
-```
 
-### Container (Start)
-การเริ่มทำงาน Container (Start) หากต้องการเริ่มการทำงานของ Container ที่อยู่ในสถานะหยุดนิ่ง (Exited) ให้ใช้คำสั่ง `docker start` ตามด้วย Container ID หรือ Name
+### Start Container
+หากต้องการเริ่มการทำงานของ Container ที่อยู่ในสถานะหยุดนิ่ง (Exited) ให้ใช้คำสั่ง docker start ตามด้วย Container ID หรือ Name
+
 ```bash
+# docker start <container_id_or_name>
 docker start 1c08a7a0d0e4
 ```
-> *ตัวอย่าง: การเริ่ม Container Ubuntu ที่มี ID 1c08a7a0d0e4*
-ผลลัพธ์ที่ได้จะมีลักษณะคล้ายกับตัวอย่างต่อไปนี้:
-```bash
-CONTAINER ID   IMAGE     COMMAND   CREATED         STATUS         PORTS     NAMES
-1c08a7a0d0e4   ubuntu    "bash"    6 minutes ago   Up 8 seconds             dazzling_taussig
-```
 
-### Container (Stop)
-การหยุดทำงาน Container (Stop) หากต้องการหยุด Container ที่กำลังทำงานอยู่ ให้ใช้คำสั่ง `docker stop` ตามด้วย ID หรือ Name
+### Stop Container
+หากต้องการหยุด Container ที่กำลังทำงานอยู่ ให้ใช้คำสั่ง docker stop ตามด้วย Container ID หรือ Name
 ```bash
-docker stop dazzling_taussig
+# docker stop <container_id_or_name>
+docker stop nginx
 ```
 > *ตัวอย่าง: การหยุด Container โดยอ้างอิงจากชื่อ dazzling_taussig*
 
-### Container (Remove)
-มื่อไม่ต้องการใช้งาน Container นั้นแล้ว สามารถลบออกจากระบบได้ด้วยคำสั่ง docker rm (ควรตรวจสอบให้แน่ใจว่า Container ถูก Stop แล้วก่อนทำการลบ)
+### Remove Container
+
+เมื่อไม่ต้องการใช้งาน Container นั้นแล้ว สามารถลบออกจากระบบได้ด้วยคำสั่ง docker rm
+
 ```bash
-docker rm adoring_kowalevski
+# docker rm <container_id_or_name>
+docker rm 1c08a7a0d0e4
 ```
-> *ตัวอย่าง: การลบ Container โดยระบุชื่อ adoring_kowalevski*
