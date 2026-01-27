@@ -1,44 +1,52 @@
 # Docker Compose
 
+## What is Docker Compose
+
+Docker Compose เป็นเครื่องมือสำหรับจัดการแอปพลิเคชันที่ประกอบด้วยหลาย Container (เช่น Web, Database, Cache) โดยใช้ไฟล์ `docker-compose.yml` เพียงไฟล์เดียวในการควบคุม ช่วยให้เราไม่ต้องพิมพ์คำสั่ง `docker run` ยาวๆ หลายครั้ง
 Docker Composeช่วยให้คุณสามารถกำหนดและเรียกใช้แอปพลิเคชันแบบหลายคอนเทนเนอร์ได้ด้วยไฟล์การกำหนดค่าเพียงไฟล์เดียว
 
-ติดตั้ง Docker Compose (ปลั๊กอิน Compose v2)
-หากคุณติดตั้ง Docker จากที่เก็บ Docker อย่างเป็นทางการในขั้นตอนที่ 1 แล้ว คุณสามารถติดตั้งปลั๊กอิน Compose v2 ได้โดยใช้คำสั่งต่อไปนี้ `apt`:
+## Basic Commands
 
-```bash
-sudo apt update
-sudo apt install docker-compose-plugin
-```
-ตรวจสอบการติดตั้ง:
-```bash
-docker compose version
-```
-สร้างไฟล์ Compose ที่มีขนาดเล็กที่สุด
-สร้างไดเร็กทอรีสำหรับแอปตัวอย่างและย้ายเข้าไปในไดเร็กทอรีนั้น:
-```bash
-mkdir compose-demo && cd compose-demo
-```
-สร้าง `compose.yaml` ไฟล์:
-```bash
-services:
-  web:
-    image: nginx:alpine
-    ports:
-      - "8080:80"
-```
-เริ่มบริการในโหมดพื้นหลัง:
+###Compose (Up)
+คำสั่งสำหรับสร้างและเริ่มการทำงานของ Services ทั้งหมดที่ระบุไว้ในไฟล์ `docker-compose.yml` โดย `-d` หมายถึงให้ทำงานแบบเบื้องหลัง
 ```bash
 docker compose up -d
 ```
-ตรวจสอบว่าโปรแกรมกำลังทำงานอยู่หรือไม่:
+ผลลัพธ์ที่ได้จะมีลักษณะคล้ายกับตัวอย่างต่อไปนี้:
+```bash
+[+] Running 3/3
+ ✔ Network app-network        Created
+ ✔ Container db-mysql         Started
+ ✔ Container web-app          Started
+```
+
+### Compose (List)
+คำสั่งสำหรับตรวจสอบรายชื่อและสถานะของ Container ทั้งหมดที่ทำงานอยู่ภายใต้โปรเจกต์ (หรือไฟล์ `docker-compose.yml`) นั้นๆ เพื่อดูว่า Service ใดกำลังทำงานอยู่ (Up) หรือหยุดทำงาน (Exited) รวมถึงดู Port ที่เปิดใช้งาน
 ```bash
 docker compose ps
 ```
-ดูบันทึก:
+
+### Compose (Logs)
+คำสั่งสำหรับเรียกดู Log การทำงานของทุก Services ที่รันอยู่ภายใต้ Compose นั้นๆ (ใช้ `-f` หากต้องการดูแบบ Real-time)
 ```bash
-docker compose logs --tail=50
+docker compose logs 
 ```
-หยุดและยกเลิกบริการ:
+ผลลัพธ์ที่ได้จะมีลักษณะคล้ายกับตัวอย่างต่อไปนี้:
+```bash
+web-app  | Listening on port 80...
+db-mysql | Database initialized...
+web-app  | Received request from 172.18.0.1
+```
+
+### Compose (Down)
+คำสั่งสำหรับหยุดและลบ Containers, Networks และ Volumes ที่ถูกสร้างขึ้นโดย Docker Compose (เป็นการเคลียร์ระบบให้สะอาด)
 ```bash
 docker compose down
+```
+ผลลัพธ์ที่ได้จะมีลักษณะคล้ายกับตัวอย่างต่อไปนี้:
+```bash
+[+] Running 3/3
+ ✔ Container web-app          Removed
+ ✔ Container db-mysql         Removed
+ ✔ Network app-network        Removed
 ```
