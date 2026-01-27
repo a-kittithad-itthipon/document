@@ -149,19 +149,19 @@ docker pull <image-name> <username>/<repository>:<tag>
 
 ### Push/Pull Image Example
 
-1.สร้าง Repogistories ใน Docker Hub โดยใช้คําสั่ง `docker tag my-web:1.0 ctsurin/my-web:1.0` จากนั้น Docker สร้าง Image
+- สร้าง Repogistories ใน Docker Hub โดยใช้คําสั่ง `docker tag my-web:1.0 ctsurin/my-web:1.0` จากนั้น Docker สร้าง Image
 ชื่อ `ctsurin/my-web Tag 1.0` ที่ใช้สําหรับ `Push Image`
 
-2.Push Image `docker push ctsurin/my-web:1.0` 
+- Push Image `docker push ctsurin/my-web:1.0` 
 
-3.ตรวจสอบ Repository ที่ Myhub (https://login.docker.com/u/login/)
+- ตรวจสอบ Repository ที่ Myhub (https://login.docker.com/u/login/)
 
-4.Pull Image จาก Docker Hub โดยใช้คําสั่ง `docker pull ctsurin/my-web:1.0`
+- Pull Image จาก Docker Hub โดยใช้คําสั่ง `docker pull ctsurin/my-web:1.0`
 
 
 
 โดย **Repository** หนึ่งควรเก็บ image ประเภทเดียวกัน โดยการสร้าง Repository ใหม่ จากคําสั่ง Docker Tag เช่น
 
-1.`docker tag my-py-app:1.0 ctsurin/my-py-app:1.0`
+- `docker tag my-py-app:1.0 ctsurin/my-py-app:1.0`
 
-2.`docker push ctsurin/my-py-app:1.0`
+- `docker push ctsurin/my-py-app:1.0`
