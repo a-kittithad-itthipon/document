@@ -28,7 +28,6 @@ const basicItems = {
     }
   },
   "docker-desktop": "",
-  "test": "",
 };
 
 const techStackItems = {
